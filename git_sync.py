@@ -10,6 +10,7 @@ from logging import info, debug
 LOG_PATH = "/home/amoe/ng_annex_sync_log.log"
 GIT_DIR = "/home/amoe/ng-annex"
 AUTO_COMMIT_MESSAGE = 'automatic commit'
+PRIVILEGED_SEGMENT_BINARY_NAME = '/usr/local/share/git-sync/privileged-part'
 
 log_stream = open(LOG_PATH, 'a')
 
@@ -37,8 +38,9 @@ if status_output:
 else:
     info("No changes, not committing.")
 
-subprocess.check_call(git(['fetch']), stdout=log_stream, stderr=log_stream)
+
+subprocess.check_call(['sudo', PRIVILEGED_SEGMENT_BINARY_NAME, 'fetch'], stdout=log_stream, stderr=log_stream)
 subprocess.check_call(git(['merge', '--ff', '--ff-only']), stdout=log_stream, stderr=log_stream)
-subprocess.check_call(git(['push']), stdout=log_stream, stderr=log_stream)
+subprocess.check_call(['sudo', PRIVILEGED_SEGMENT_BINARY_NAME, 'push'], stdout=log_stream, stderr=log_stream)
 
 log_stream.close()

@@ -10,7 +10,7 @@ command = sys.argv[1]
 print(command)
 
 NG_ANNEX_LOCATION = '/home/amoe/ng-annex'
-PRECIOUS_KEY_LOCATION = '/home/amoe/PRECIOUS.pem'
+PRECIOUS_KEY_LOCATION = '/usr/local/share/git-sync/sync-key.pem'
 my_env = os.environ.copy()
 my_env['GIT_SSH_COMMAND'] = 'ssh -l amoe -o PasswordAuthentication=no -o IdentitiesOnly=yes -i {}'.format(PRECIOUS_KEY_LOCATION)
 
