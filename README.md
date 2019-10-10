@@ -13,3 +13,8 @@ to set up an hourly sync
     }
 
 remember to deploy the sync key
+
+It relies on cron-notify-send script which needs its own scaffolding.
+
+With inspiration from [simonthum](https://github.com/simonthum/git-sync), sorry
+for the name clash.
