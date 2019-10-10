@@ -1,3 +1,5 @@
+> This is my sync script.  There are many like it, but this one is mine.
+
 to set up an hourly sync
 
     class main::git_sync {
