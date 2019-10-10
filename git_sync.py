@@ -50,6 +50,6 @@ class GitSync(object):
 try:
     obj = GitSync()
     obj.run()
-except e:
+except Exception as e:
     message = str(e).encode('utf-8')
     subprocess.run(['cron-notify-send', 'git-sync'], input=message)    
