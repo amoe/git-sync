@@ -11,3 +11,9 @@ to set up an hourly sync
     }
 
 remember to deploy the sync key
+
+rememebr to add the sudo entry
+
+    amoe   ALL = (root) NOPASSWD: /usr/local/share/git-sync/privileged-part
+
+It also needs the cron-notify-send utility.
