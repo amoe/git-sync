@@ -3,7 +3,7 @@
 import subprocess
 import logging
 import sys
-from logging import info, debug
+from logging import info, debug, warning
 
 # SSH based key unlock needs some sort of handling, but it's not clear how.
 
@@ -20,12 +20,12 @@ def git(rest_of_command):
 
 class GitSync(object):
     def run(self):
-        log_stream = open(LOG_PATH, 'a')
+        self.log_stream = open(LOG_PATH, 'a')
 
         logging.basicConfig(
             handlers=[
                 logging.StreamHandler(sys.stdout),
-                logging.StreamHandler(log_stream)
+                logging.StreamHandler(self.log_stream)
             ],
             level=logging.DEBUG,            
             format="%(asctime)s - %(levelname)8s - %(name)s - %(message)s"
@@ -35,17 +35,28 @@ class GitSync(object):
 
         # If status output is blank, then nothing has changed.
         if status_output:
-            subprocess.check_call(git(['add', '-A']), stdout=log_stream, stderr=log_stream)
-            subprocess.check_call(git(['commit', '-m', AUTO_COMMIT_MESSAGE]), stdout=log_stream, stderr=log_stream)
+            subprocess.check_call(git(['add', '-A']), stdout=self.log_stream, stderr=self.log_stream)
+            subprocess.check_call(git(['commit', '-m', AUTO_COMMIT_MESSAGE]), stdout=self.log_stream, stderr=self.log_stream)
         else:
             info("No changes, not committing.")
 
 
-        subprocess.check_call(['sudo', PRIVILEGED_SEGMENT_BINARY_NAME, 'fetch'], stdout=log_stream, stderr=log_stream)
-        subprocess.check_call(git(['merge', '--ff', '--ff-only']), stdout=log_stream, stderr=log_stream)
-        subprocess.check_call(['sudo', PRIVILEGED_SEGMENT_BINARY_NAME, 'push'], stdout=log_stream, stderr=log_stream)
+        subprocess.check_call(['sudo', PRIVILEGED_SEGMENT_BINARY_NAME, 'fetch'], stdout=self.log_stream, stderr=self.log_stream)
+        self.merge_or_abort()
 
-        log_stream.close()
+        subprocess.check_call(['sudo', PRIVILEGED_SEGMENT_BINARY_NAME, 'push'], stdout=self.log_stream, stderr=self.log_stream)
+
+        self.log_stream.close()
+
+    # Aborting the merge will still propagate the exception.
+    def merge_or_abort(self):
+        try:
+            subprocess.check_call(git(['merge']), stdout=self.log_stream, stderr=self.log_stream)
+        except subprocess.CalledProcessError as e:
+            warning("Merge failed!  Rolling back merge state.")
+            subprocess.check_call(git(['merge', '--abort']), stdout=self.log_stream, stderr=self.log_stream)
+            raise e
+            
 
 try:
     obj = GitSync()
