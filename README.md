@@ -12,7 +12,8 @@ to set up an hourly sync
         }
     }
 
-remember to deploy the sync key
+remember to deploy the sync key; it should be deployed with ownership root:root
+and permissions `0400`.
 
 rememebr to add the sudo entry
 
