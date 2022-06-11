@@ -1,5 +1,12 @@
 > This is my sync script.  There are many like it, but this one is mine.
 
+The concept of this script is that a user's regular SSH key may be protected
+with a passphrase, which prevents automated use of the key for `git fetch`
+operations.  However, if the user also has an key that does not use a
+passphrase, they can set up that key in a secure location (with mode `0400` or
+similar), and the script will use `sudo` to get the necessary permissions to use
+the key.
+
 to set up an hourly sync
 
     class main::git_sync {
